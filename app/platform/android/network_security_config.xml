@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copy to: android/app/src/main/res/xml/network_security_config.xml
+  and add android:networkSecurityConfig="@xml/network_security_config" to <application>.
+
+  Why cleartext is permitted at all: Theyso's default URL is ws://100.x.y.z (your
+  Tailscale IP). That traffic is already encrypted end-to-end by WireGuard, and
+  the app layer pins + verifies the server's Ed25519 key on every connection.
+  The app refuses any ws:// host outside 100.64.0.0/10, fd7a:115c:a1e0::/48 or
+  *.ts.net (see lib/core/storage.dart → isAllowedServerUrl).
+  Prefer wss:// via `tailscale serve` and you can set this to false.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Theyso">
+  <defs>
+    <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="200" y1="250" x2="620" y2="850">
+      <stop offset="0" stop-color="#7C5CFF"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+    <mask id="holes">
+      <rect width="1024" height="1024" fill="#fff"/>
+      <circle cx="262" cy="330" r="30"/><circle cx="762" cy="330" r="30"/><circle cx="512" cy="770" r="30"/>
+    </mask>
+  </defs>
+  <g mask="url(#holes)" fill="url(#g)" stroke="url(#g)" stroke-width="78" stroke-linecap="round">
+    <path d="M262 330H762" fill="none"/>
+    <path d="M512 330C512 470 632 560 512 770" fill="none"/>
+    <circle cx="262" cy="330" r="74" stroke="none"/>
+    <circle cx="762" cy="330" r="74" stroke="none"/>
+    <circle cx="512" cy="770" r="74" stroke="none"/>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+name: Idea
+description: Propón una función / Suggest a feature
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes: { label: Qué problema resuelve }
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes: { label: Propuesta }
+  - type: textarea
+    id: security
+    attributes:
+      label: Impacto en seguridad
+      description: ¿Abre algún camino nuevo hacia la PC? ¿Necesita pasar por la política de permisos?

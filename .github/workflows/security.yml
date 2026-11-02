@@ -1,0 +1,55 @@
+name: security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "23 7 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  python-sast:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -e ".[dev]"
+      - name: Bandit
+        run: bandit -c pyproject.toml -r theyso
+      - name: pip-audit (project dependencies)
+        run: pip-audit --strict
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install detect-secrets
+      - name: detect-secrets (fail on new, unaudited secrets)
+        run: |
+          detect-secrets scan --baseline .secrets.baseline \
+            --exclude-files '(^|/)(\.git|build|\.dart_tool|.*_cache|.*\.egg-info)/'
+          git diff --exit-code .secrets.baseline \
+            || (echo "::error::New potential secret found. Review and update .secrets.baseline." && exit 1)
+
+  semgrep:
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+      # Registry rulesets when the runner has network; our offline rules always.
+      - run: semgrep --error --metrics off --config .github/semgrep-rules.yml server/
+      - run: semgrep --error --metrics off --config "p/python" --config "p/secrets" server/ || true

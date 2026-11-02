@@ -1,0 +1,23 @@
+name: Bug
+description: Algo no funciona / Something is broken
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "⚠️ ¿Es una vulnerabilidad? No la publiques aquí: usa Security → Report a vulnerability."
+  - type: textarea
+    id: what
+    attributes: { label: Qué pasó, description: Pasos para reproducirlo }
+    validations: { required: true }
+  - type: input
+    id: versions
+    attributes: { label: Versiones, placeholder: "theyso 0.1.0 · app 0.1.0 · claude 2.x · Android 15" }
+  - type: dropdown
+    id: agent
+    attributes: { label: Agente, options: [Claude Code, OpenCode, otro] }
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (sin secretos)
+      description: "`theyso serve -v` y `theyso audit -n 30`. Revisa que no haya API keys."
+      render: text
