@@ -1,0 +1,93 @@
+rules:
+  - id: subprocess-shell-true
+    languages: [python]
+    severity: ERROR
+    message: subprocess with shell=True can enable command injection
+    patterns:
+      - pattern-either:
+          - pattern: subprocess.$F(..., shell=True, ...)
+          - pattern: os.system(...)
+          - pattern: os.popen(...)
+  - id: dynamic-code-exec
+    languages: [python]
+    severity: ERROR
+    message: Dynamic code execution (eval/exec/compile)
+    patterns:
+      - pattern-either:
+          - pattern: eval(...)
+          - pattern: exec(...)
+          - pattern: compile(...)
+  - id: insecure-deserialization
+    languages: [python]
+    severity: ERROR
+    message: Insecure deserialization (pickle / yaml.load / marshal)
+    patterns:
+      - pattern-either:
+          - pattern: pickle.load(...)
+          - pattern: pickle.loads(...)
+          - pattern: marshal.loads(...)
+          - pattern: yaml.load($X)
+  - id: weak-hash-or-random
+    languages: [python]
+    severity: WARNING
+    message: Weak primitive for security use (md5/sha1 or non-crypto random)
+    patterns:
+      - pattern-either:
+          - pattern: hashlib.md5(...)
+          - pattern: hashlib.sha1(...)
+          - pattern: random.random(...)
+          - pattern: random.randint(...)
+  - id: requests-without-timeout
+    languages: [python]
+    severity: WARNING
+    message: Outbound request without an explicit timeout
+    patterns:
+      - pattern-either:
+          - pattern: requests.$M(...)
+          - pattern: httpx.$M(...)
+      - pattern-not: $MOD.$M(..., timeout=$T, ...)
+      - metavariable-regex:
+          metavariable: $M
+          regex: ^(get|post|put|delete|patch|request|head)$
+  - id: tls-verify-disabled
+    languages: [python]
+    severity: ERROR
+    message: TLS certificate verification disabled
+    patterns:
+      - pattern-either:
+          - pattern: $M(..., verify=False, ...)
+          - pattern: ssl._create_unverified_context(...)
+  - id: non-constant-time-secret-compare
+    languages: [python]
+    severity: WARNING
+    message: Comparing a secret/proof/signature/token with == (use hmac.compare_digest)
+    patterns:
+      - pattern-either:
+          - pattern: $A == $B
+          - pattern: $A != $B
+      - metavariable-regex:
+          metavariable: $A
+          regex: (?i).*(secret|proof|signature|token|password|hmac|mac|digest).*
+  - id: bind-all-interfaces
+    languages: [python]
+    severity: WARNING
+    message: Binding to all interfaces (0.0.0.0)
+    patterns:
+      - pattern: '"0.0.0.0"'
+  - id: world-writable-or-readable
+    languages: [python]
+    severity: WARNING
+    message: Creating a file/dir with permissive mode
+    patterns:
+      - pattern-either:
+          - pattern: os.chmod($P, 0o777)
+          - pattern: os.chmod($P, 0o666)
+          - pattern: os.chmod($P, 0o644)
+  - id: fastapi-debug-true
+    languages: [python]
+    severity: ERROR
+    message: Server started in debug mode
+    patterns:
+      - pattern-either:
+          - pattern: uvicorn.run(..., debug=True, ...)
+          - pattern: FastAPI(..., debug=True, ...)

@@ -1,0 +1,11 @@
+<!-- Merge into ios/Runner/Info.plist after `flutter create` -->
+<key>NSCameraUsageDescription</key>
+<string>Theyso usa la cámara solo para escanear el código QR de vinculación de tu PC.</string>
+<key>NSFaceIDUsageDescription</key>
+<string>Theyso pide Face ID para desbloquear la app y aprobar acciones de riesgo alto.</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Theyso usa el micrófono solo para el dictado, que se transcribe en el propio iPhone.</string>
+<key>NSSpeechRecognitionUsageDescription</key>
+<string>El dictado se procesa en el dispositivo; el audio no se envía a ningún servidor.</string>
+<key>NSLocalNetworkUsageDescription</key>
+<string>Theyso se conecta a tu PC a través de tu red privada de Tailscale.</string>
