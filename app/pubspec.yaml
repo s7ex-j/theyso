@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_riverpod: ^2.5.1
+  flutter_riverpod: ^3.4.3
   web_socket_channel: ^3.0.1
   async: ^2.11.0
   http: ^1.2.2
