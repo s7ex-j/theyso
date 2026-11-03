@@ -10,6 +10,10 @@
 
 ![status](https://img.shields.io/badge/status-alpha-orange) ![license](https://img.shields.io/badge/license-MIT-blue) ![server](https://img.shields.io/badge/server-Python%203.11+-3776AB) ![app](https://img.shields.io/badge/app-Flutter-02569B)
 
+<video src="https://github.com/s7ex-j/theyso/raw/main/docs/brand/demo.mp4" controls muted width="760"></video>
+
+<sub>▶ 48-second overview — if the player doesn't load, <a href="https://github.com/s7ex-j/theyso/raw/main/docs/brand/demo.mp4">open the clip</a>.</sub>
+
 </div>
 
 > Your phone, your PC, a direct line between them — over your own private network,

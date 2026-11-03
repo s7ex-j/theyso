@@ -8,6 +8,10 @@
 
 [English](README.md) · [Arquitectura](docs/ARCHITECTURE.md) · [Seguridad](SECURITY.md) · [Protocolo](docs/PROTOCOL.md) · [Roadmap](docs/ROADMAP.md)
 
+<video src="https://github.com/s7ex-j/theyso/raw/main/docs/brand/demo.mp4" controls muted width="760"></video>
+
+<sub>▶ Resumen de 48 segundos — si el reproductor no carga, <a href="https://github.com/s7ex-j/theyso/raw/main/docs/brand/demo.mp4">abre el clip</a>.</sub>
+
 </div>
 
 > Tu celular, tu PC y una línea directa entre ellos: por tu propia red privada
