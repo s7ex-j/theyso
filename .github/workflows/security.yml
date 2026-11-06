@@ -25,7 +25,8 @@ jobs:
       - name: Bandit
         run: bandit -c pyproject.toml -r theyso
       - name: pip-audit (project dependencies)
-        run: pip-audit --strict
+        # --skip-editable: theyso itself is installed in editable mode and is not on PyPI
+        run: pip-audit --strict --skip-editable
 
   secrets:
     runs-on: ubuntu-latest

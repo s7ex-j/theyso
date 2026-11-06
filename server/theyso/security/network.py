@@ -74,7 +74,8 @@ def resolve_bind_host(configured: str, allow_insecure: bool) -> str:
                 "or set server.host = \"127.0.0.1\" for local testing."
             )
         host = detected
-    if host in {"0.0.0.0", "::"}:  # noqa: S104  # nosec B104 — this REJECTS all-interfaces binds
+    # This check REJECTS all-interfaces binds; the scanners flag the literal itself.
+    if host in {"0.0.0.0", "::"}:  # noqa: S104  # nosec B104  # nosemgrep: bind-all-interfaces
         if not allow_insecure:
             raise UnsafeBindError("Refusing to bind to all interfaces. See docs/SECURITY.md.")
         return host
