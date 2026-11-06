@@ -25,8 +25,10 @@ jobs:
       - name: Bandit
         run: bandit -c pyproject.toml -r theyso
       - name: pip-audit (project dependencies)
-        # --skip-editable: theyso itself is installed in editable mode and is not on PyPI
-        run: pip-audit --strict --skip-editable
+        # Audit the installed dependencies, excluding theyso itself (editable, not on PyPI).
+        run: |
+          pip freeze --exclude-editable > "$RUNNER_TEMP/requirements-audit.txt"
+          pip-audit --strict --disable-pip --no-deps -r "$RUNNER_TEMP/requirements-audit.txt"
 
   secrets:
     runs-on: ubuntu-latest
@@ -42,7 +44,7 @@ jobs:
         run: |
           detect-secrets scan --baseline .secrets.baseline \
             --exclude-files '(^|/)(\.git|build|\.dart_tool|.*_cache|.*\.egg-info)/'
-          git diff --exit-code .secrets.baseline \
+          git diff --exit-code -I '"generated_at"' .secrets.baseline \
             || (echo "::error::New potential secret found. Review and update .secrets.baseline." && exit 1)
 
   semgrep:
