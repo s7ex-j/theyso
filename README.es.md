@@ -32,6 +32,21 @@ Ya existen formas de usar Claude Code desde el celular: el **Remote Control** of
 - **Ligero**: el servidor usa ~55 MB de RAM en reposo; la app no corre en segundo plano.
 - **Motor de políticas.** Bloquea `rm -rf ~` antes de que llegue a ti, y pide tu huella para `git push --force`, `sudo` o escrituras fuera del proyecto.
 
+## Cómo funciona
+
+```
+┌──────────────┐  WireGuard (Tailscale)   ┌──────────────────────────┐  Agent SDK / HTTP  ┌────────────────────────┐
+│ Celular      │  + auth mutua Ed25519    │ theyso serve (tu PC)     │ ─────────────────▶ │ Claude Code / OpenCode │
+│ app Flutter  │ ◀──────────────────────▶ │ política · máscara · log │                    │ cualquier modelo/router│
+└──────────────┘    JSON sobre WebSocket  └──────────────────────────┘                    └────────────────────────┘
+```
+
+- **Sin leer la terminal.** Claude Code se maneja con el Agent SDK oficial (mensajes estructurados, callbacks de permisos); OpenCode, con su servidor HTTP headless.
+- **Vinculación por QR con un código de 6 dígitos**, como emparejar audífonos Bluetooth. Sin contraseñas ni bearer tokens.
+- **Cada llamada a una herramienta pasa por una política** antes de llegar a ti.
+- **Reenvío al reconectar**: si pierdes señal en el ascensor, recibes exactamente los eventos que te perdiste.
+- **Auditado**: Bandit, Semgrep, detect-secrets y pip-audit pasan limpios; 16 pruebas de ataque activas corren en CI ([AUDIT.md](docs/AUDIT.md)).
+
 ## Inicio rápido
 
 **En la PC** (Python 3.11+, [Tailscale](https://tailscale.com) instalado y con sesión iniciada):
@@ -48,6 +63,22 @@ theyso service install     # opcional: que arranque solo al iniciar sesión
 
 **En el celular:** instala Tailscale con la misma cuenta, compila la app (`cd app && python tool/setup.py`, ver [app/README.md](app/README.md)) o descarga el APK de la última ejecución de GitHub Actions, toca **Vincular PC**, escanea, compara el código de 6 dígitos y aprueba en la PC.
 
+## Perfiles: cualquier modelo
+
+```toml
+[profiles.router]                 # Claude Code a través de un router local
+agent = "claude-code"
+model = "id-del-modelo-en-tu-router"
+[profiles.router.env]
+ANTHROPIC_BASE_URL   = "http://127.0.0.1:20128"
+ANTHROPIC_AUTH_TOKEN = "env:ROUTER_API_KEY"   # los secretos vienen del entorno, nunca del archivo
+
+[profiles.opencode]
+agent = "opencode"                 # usa los proveedores que tengas configurados en OpenCode
+```
+
+Desde el celular eliges el perfil al abrir una sesión y puedes cambiar de modelo a mitad de sesión. Ver [docs/PROVIDERS.md](docs/PROVIDERS.md).
+
 ## Seguridad, en resumen
 
 - Solo escucha en loopback o en IPs de Tailscale; `0.0.0.0` exige activarlo explícitamente.
@@ -55,14 +86,27 @@ theyso service install     # opcional: que arranque solo al iniciar sesión
 - Cada conexión: desafío-respuesta Ed25519 mutuo con nonces nuevos; el celular fija (pin) la clave de la PC.
 - `bypassPermissions` está prohibido por validación de configuración. Los permisos sin respuesta se **deniegan** tras un tiempo.
 - Las credenciales (API keys, tokens, claves privadas, valores de `.env`) se enmascaran antes de salir de la PC.
+- Las rutas protegidas (`~/.ssh`, `~/.aws`, `.env`, la propia configuración de Theyso) se deniegan para todas las herramientas.
 - Botón de pánico en el celular y `theyso panic` en la PC; `theyso revoke` corta al instante la conexión de un dispositivo.
 - Registro de auditoría solo-anexar (los prompts se guardan como hash por defecto).
 
 Detalles: [SECURITY.md](SECURITY.md) y [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
 
+## Estructura del repositorio
+
+```
+server/   Puente en Python: FastAPI + WebSockets, adaptadores de agentes, seguridad, métricas, CLI, tests
+app/      App Flutter: vinculación, chat, tarjetas de permisos, diffs, panel de uso
+docs/     arquitectura, protocolo, vinculación, modelo de amenazas, proveedores, roadmap
+```
+
 ## Sobre los routers de terceros
 
 Theyso solo pasa al agente las variables de entorno que **tú** configuras; no incluye rotación de cuentas, ni reutilización de tokens de suscripción, ni nada para saltarse los límites de un proveedor. Algunos routers ofrecen funciones de ese tipo que pueden incumplir los términos del proveedor original: esa decisión y su riesgo son tuyos.
+
+## Estado
+
+Alpha. El servidor tiene una batería de tests que cubre la vinculación, el handshake, la política, el enmascarado y una sesión de punta a punta; la app comparte vectores de prueba criptográficos con el servidor. Puede haber cambios incompatibles en el protocolo antes de la 1.0.
 
 ## Licencia
 
