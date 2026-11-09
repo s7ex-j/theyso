@@ -16,7 +16,7 @@ dependencies:
   http: ^1.2.2
   cryptography: ^2.7.0          # Ed25519 + HMAC-SHA256 (pure Dart, audited primitives)
   flutter_secure_storage: ^9.2.2 # Android Keystore / iOS Keychain
-  mobile_scanner: ^5.2.3         # QR scanning
+  mobile_scanner: ^7.5.0         # QR scanning
   local_auth: ^2.3.0             # biometric confirmation for high-risk actions
   flutter_markdown_plus: ^1.0.3  # assistant replies are markdown
   fl_chart: ^0.69.0              # usage dashboard
